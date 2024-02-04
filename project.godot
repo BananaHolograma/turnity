@@ -16,9 +16,17 @@ config/version="1.0.0"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+TurnityManager="*res://addons/turnity/turn_manager.gd"
+
 [dotnet]
 
-project/assembly_name="GodotParadiseHealthComponent"
+project/assembly_name="Turnity"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/turnity/plugin.cfg")
 
 [rendering]
 

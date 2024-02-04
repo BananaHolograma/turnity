@@ -29,7 +29,7 @@ func set_mode(mode: MODE):
 		current_mode = mode
 		
 		
-func sort_rule(callable: Callable):
+func apply_sort_rule(callable: Callable):
 	current_turnity_sockets.sort_custom(callable)
 
 
