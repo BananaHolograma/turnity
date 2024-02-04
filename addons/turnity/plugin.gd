@@ -1,8 +1,12 @@
 @tool
 extends EditorPlugin
 
-func _enter_tree():
-	pass
 
+func _enter_tree():
+	add_custom_type("TurnitySocket", "Node", preload("res://addons/turnity/turn_socket.gd"), preload("res://addons/icons/turn_socket.svg"))
+	add_autoload_singleton("TurnityManager", "res://addons/turnity/turn_manager.gd")
+	
+	
 func _exit_tree():
-	pass
+	remove_custom_type("TurnitySocket")
+	remove_autoload_singleton("TurnityManager")

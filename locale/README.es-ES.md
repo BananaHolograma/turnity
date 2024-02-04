@@ -1,5 +1,5 @@
 <p align="center">
-	<img width="256px" src="https://github.com/bananaholograma/turnity/blob/main/icon.jpg" alt="turnity logo" />
+	<img width="256px" src="https://github.com/bananaholograma/turnity/blob/main/icon.png" alt="turnity logo" />
 	<h1 align="center">turnity</h1>
 	
 [![LastCommit](https://img.shields.io/github/last-commit/bananaholograma/turnity?cacheSeconds=600)](https://github.com/bananaholograma/turnity/commits)

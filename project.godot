@@ -20,10 +20,6 @@ config/icon="res://icon.svg"
 
 project/assembly_name="GodotParadiseHealthComponent"
 
-[editor_plugins]
-
-enabled=PackedStringArray()
-
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
