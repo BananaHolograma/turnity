@@ -1,15 +1,15 @@
 <p align="center">
-	<img width="256px" src="https://github.com/bananaholograma/[PLUGIN]/blob/main/icon.jpg" alt="[PLUGIN] logo" />
-	<h1 align="center">[PLUGIN]</h1>
+	<img width="256px" src="https://github.com/bananaholograma/turnity/blob/main/icon.jpg" alt="turnity logo" />
+	<h1 align="center">turnity</h1>
 	
-[![LastCommit](https://img.shields.io/github/last-commit/bananaholograma/[PLUGIN]?cacheSeconds=600)](https://github.com/bananaholograma/[PLUGIN]/commits)
-[![Stars](https://img.shields.io/github/stars/bananaholograma/[PLUGIN])](https://github.com/bananaholograma/[PLUGIN]/stargazers)
-[![Total downloads](https://img.shields.io/github/downloads/bananaholograma/[PLUGIN]/total.svg?label=Downloads&logo=github&cacheSeconds=600)](https://github.com/bananaholograma/[PLUGIN]/releases)
-[![License](https://img.shields.io/github/license/bananaholograma/[PLUGIN]?cacheSeconds=2592000)](https://github.com/bananaholograma/[PLUGIN]/blob/main/LICENSE.md)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/bananaholograma/[PLUGIN]/pulls)
+[![LastCommit](https://img.shields.io/github/last-commit/bananaholograma/turnity?cacheSeconds=600)](https://github.com/bananaholograma/turnity/commits)
+[![Stars](https://img.shields.io/github/stars/bananaholograma/turnity)](https://github.com/bananaholograma/turnity/stargazers)
+[![Total downloads](https://img.shields.io/github/downloads/bananaholograma/turnity/total.svg?label=Downloads&logo=github&cacheSeconds=600)](https://github.com/bananaholograma/turnity/releases)
+[![License](https://img.shields.io/github/license/bananaholograma/turnity?cacheSeconds=2592000)](https://github.com/bananaholograma/turnity/blob/main/LICENSE.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/bananaholograma/turnity/pulls)
 </p>
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/bananaholograma/[PLUGIN]/blob/main/README.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/bananaholograma/turnity/blob/main/README.md)
 
 - - -
 
@@ -35,9 +35,9 @@ Puedes descargar este plugin desde la [Godot asset library](https://godotengine.
 Para instalar manualmente el plugin, crea una carpeta **"addons"** en la raíz de tu proyecto Godot y luego descarga el contenido de la carpeta **"addons"** de este repositorio
 
 # ✌️Eres bienvenido a
-- [Give feedback](https://github.com/bananaholograma/[PLUGIN]/pulls)
-- [Suggest improvements](https://github.com/bananaholograma/[PLUGIN]/issues/new?assignees=BananaHolograma&labels=enhancement&template=feature_request.md&title=)
-- [Bug report](https://github.com/bananaholograma/[PLUGIN]/issues/new?assignees=BananaHolograma&labels=bug%2C+task&template=bug_report.md&title=)
+- [Give feedback](https://github.com/bananaholograma/turnity/pulls)
+- [Suggest improvements](https://github.com/bananaholograma/turnity/issues/new?assignees=BananaHolograma&labels=enhancement&template=feature_request.md&title=)
+- [Bug report](https://github.com/bananaholograma/turnity/issues/new?assignees=BananaHolograma&labels=bug%2C+task&template=bug_report.md&title=)
 
 Este plugin esta disponible de forma gratuita.
 
@@ -47,7 +47,7 @@ Si estas agradecido por lo que hacemos, por favor, considera hacer una donación
 # 🤝Normas de contribución
 **¡Gracias por tu interes en este plugin!**
 
-Para garantizar un proceso de contribución fluido y colaborativo, revise nuestras [directrices de contribución](https://github.com/bananaholograma/[PLUGIN]/blob/main/CONTRIBUTING.md) antes de empezar. Estas directrices describen las normas y expectativas que mantenemos en este proyecto.
+Para garantizar un proceso de contribución fluido y colaborativo, revise nuestras [directrices de contribución](https://github.com/bananaholograma/turnity/blob/main/CONTRIBUTING.md) antes de empezar. Estas directrices describen las normas y expectativas que mantenemos en este proyecto.
 
 **📓Código de conducta:** En este proyecto nos adherimos estrictamente al [Código de conducta de Godot](https://godotengine.org/code-of-conduct/). Como colaborador, es importante respetar y seguir este código para mantener una comunidad positiva e inclusiva.
 - - -
