@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Play",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+      // Replace your "program" path with path to your Godot installation.
+      // Here you can find some examples (remember to replace [user]!):
+      // /Users/[user]/Downloads/Godot_mono.app/Contents/MacOS/Godot
+      // /Applications/Godot_mono.app/Contents/MacOS/Godot
+      // C:/Users/[user]/Downloads/Godot_v4.1-stable_mono_win64/Godot.exe
+      // C:/Program Files/Godot/Godot.exe
+        "program": "C:\\Users\\local_rro7db8\\Downloads\\Godot_v4.1.2-stable_mono_win64\\Godot_v4.1.2-stable_mono_win64.exe",
+        "args": [],
+        "cwd": "${workspaceFolder}",
+        "stopAtEntry": false,
+      }
+    ]
+  }
