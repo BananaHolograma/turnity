@@ -29,12 +29,19 @@ Your go-to plugin for streamlined turn management in Godot. Elevate your game's 
 	- [Manual](#manual)
 - [Getting started](#getting-started)
 	- [Initializing a new turn system](#initializing-a-new-turn-system)
+	- [Use signals in your favor](#use-signals-in-your-favor)
 	- [Manually move to the next turn](#manually-move-to-the-next-turn)
 		- [Available accessors and signals](#available-accessors-and-signals)
 		- [Available methods](#available-methods)
 - [How to add a TurnitySocket](#how-to-add-a-turnitysocket)
 	- [Via editor](#via-editor)
 	- [Via script](#via-script)
+	- [Local turn duration](#local-turn-duration)
+		- [Timer](#timer)
+	- [Block the socket N turns](#block-the-socket-n-turns)
+	- [Skip the turn](#skip-the-turn)
+	- [Available accesors and signals](#available-accesors-and-signals)
+	- [Available methods](#available-methods-1)
 - [✌️You are welcome to](#️you-are-welcome-to)
 - [🤝Contribution guidelines](#contribution-guidelines)
 - [📇Contact us](#contact-us)
@@ -86,6 +93,11 @@ func your_custom_sort_function(socket_a: TurnitySocket, socket_b: TurnitySocket)
 - The turn duration in seconds, an automatic timer is managed by you to end the turn when the counter reaches zero.
 - The next turn can be automatic or not, it means that if for example the turn duration reachs zero it will pass to the next TurnitySocket
 - The sort callback applied to define the order of the turn queue, apply your own ordering logic.
+
+## Use signals in your favor
+Create your unique turn system workflow connecting to the appended `TurnitySocket` signals and reacting using the logic that your video game needs. This plugin only offers a very simple input to manage a set of turns, the rest is up to you.
+
+The signals from `TurnityManager` are useful to obtain this information in other places such as the UI.
 
 ## Manually move to the next turn
 The automatic step really only applies when the `turn_duration` is greater than zero, the rest must be applied manually. This allows you to apply the necessary logic of your game before passing the turn.
@@ -165,7 +177,89 @@ add_child(socket)
 
 The `TurnitySocket` does not need to be a child of the node to which we want to attach. For this we have an exportable variable called `actor` in which we can assign the node that we want independently of the hierarchy.
 
+## Local turn duration
+The plugin prioritize the local socket `turn duration` value so if you set a global turn duration of **30 seconds** and you set this variable to **15 seconds** in the socket, the latter is the one that will be applied. 
 
+***This is not applied if the value of the socket `turn_duration` is 0.***
+
+### Timer
+A timer is created when the node is added to the scene tree, if `automatic_move_on_to_the_next_turn` is true, when this timer reachs the timeout it will move on to the next turn automaticall, if not, it will simply emit the turn signal `ended`.
+
+This is useful to display the time using UI nodes:
+
+```python
+func _process(_delta):
+	label.text = _format_seconds(TurnityManager.current_turn_socket.timer.time_left, false)
+	
+	
+func _format_seconds(time : float, use_milliseconds : bool) -> String:
+	var minutes := time / 60
+	var seconds := fmod(time, 60)
+
+	if not use_milliseconds:
+		return "%02d:%02d" % [minutes, seconds]
+
+	var milliseconds := fmod(time, 1) * 100
+
+	return "%02d:%02d:%02d" % [minutes, seconds, milliseconds]
+
+```
+
+## Block the socket N turns
+You can block the socket a limited numbers of turns in case you want to apply some kind of anulation effect and prevent the entity from consuming a turn. This block can be reset anytime with `reset_blocked_turns`
+
+The blocked turns are cumulative so if you call the function again they will be added to the existing ones:
+```python
+## Blocked 3 turns in a row
+socket.block_a_number_of_turns(3)
+
+## Amplify 2 more
+socket.block_a_number_of_turns(2)
+```
+
+## Skip the turn
+You can invoke the `skip()` function to literally go on to the next turn as long as the variable `next_turn_when_skipped` is true, if not, it just emit the signal `skipped`.
+
+## Available accesors and signals
+```python
+signal active_turn
+signal ended_turn
+signal changed_turn_duration(old_duration: int, new_duration: int)
+signal reset_current_timer
+signal blocked_n_turns(turns: int, total_turns: int)
+signal blocked_turn_consumed(remaining_turns: int)
+signal skipped
+signal enabled_socket
+signal disabled_socket
+
+## The linked actor in the turn system
+@export var actor: Node
+## The turn duration for this socket, leave it to zero to make it infinite
+@export var turn_duration := 0
+## Automatically move on to next turn when this socket is skipped
+@export var next_turn_when_skipped := true
+## Automatically move on to next turn when this socket is blocked
+@export var next_turn_when_blocked := true
+
+var id: String
+var timer: Timer
+var active := false
+var disabled := false
+var blocked_turns := 0
+
+```
+## Available methods
+```python
+func change_turn_duration(new_duration: int) -> void
+func reset_active_timer() -> void
+func reset_blocked_turns():
+func block_a_number_of_turns(turns: int) -> void
+func is_blocked() -> bool
+func skip()
+func enable() -> void
+func disable() -> void
+func is_disabled()
+```
 
 # ✌️You are welcome to
 - [Give feedback](https://github.com/bananaholograma/turnity/pulls)

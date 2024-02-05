@@ -6,6 +6,7 @@ signal changed_turn_duration(old_duration: int, new_duration: int)
 signal reset_current_timer
 signal blocked_n_turns(turns: int, total_turns: int)
 signal blocked_turn_consumed(remaining_turns: int)
+signal blocked_turns_removed
 signal skipped
 signal enabled_socket
 signal disabled_socket
@@ -14,6 +15,10 @@ signal disabled_socket
 @export var actor: Node
 ## The turn duration for this socket, leave it to zero to make it infinite
 @export var turn_duration := 0
+## Automatically move on to next turn when this socket is skipped
+@export var next_turn_when_skipped := true
+## Automatically move on to next turn when this socket is blocked
+@export var next_turn_when_blocked := true
 
 var id: String
 var timer: Timer
@@ -75,6 +80,12 @@ func reset_active_timer():
 		reset_current_timer.emit()
 		
 
+func reset_blocked_turns():
+	if blocked_turns > 0:
+		blocked_turns = 0
+		blocked_turns_removed.emit()
+
+
 func block_a_number_of_turns(turns: int):
 	blocked_turns += turns
 	blocked_n_turns.emit(turns, blocked_turns)
@@ -86,7 +97,6 @@ func is_blocked() -> bool:
 
 func skip():
 	if active:
-		ended_turn.emit()
 		skipped.emit()
 
 
@@ -122,7 +132,6 @@ func on_active_turn():
 		if blocked_turns > 0:
 			blocked_turns -= 1
 			blocked_turn_consumed.emit(blocked_turns)
-			ended_turn.emit()
 			return
 		
 		if timer and turn_duration > 0 and active:

@@ -42,6 +42,8 @@ func start(root_node = null):
 		deactivate_sockets(current_turnity_sockets)	 ## We deactivate all the sockets to only make active the first one on the initialization
 		set_turn_duration_on_sockets()
 		
+		current_turn_socket = current_turnity_sockets.front()
+		
 		current_turn_socket.active_turn.emit()
 		activated_turn.emit(current_turn_socket)
 	else:
@@ -215,7 +217,6 @@ func _disconnect_socket(socket: TurnitySocket):
 			turnity_socket_disconnected.emit(socket)
 		
 		
-	
 ### SIGNAL CALLBACKS ###
 func on_socket_active_turn(socket: TurnitySocket):
 	activated_turn.emit(socket)
@@ -226,6 +227,16 @@ func on_socket_ended_turn(socket: TurnitySocket):
 	ended_turn.emit(socket)
 	
 	if automatic_move_on_to_the_next_turn:
+		next_turn()
+
+
+func on_socket_skipped(socket: TurnitySocket):
+	if socket.next_turn_when_skipped:
+		next_turn()
+
+
+func on_socket_blocked_turn_consumed(socket: TurnitySocket):
+	if socket.next_turn_when_blocked:
 		next_turn()
 
 
