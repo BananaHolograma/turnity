@@ -19,6 +19,8 @@ var blocked_turns := 0
 
 
 func _enter_tree():
+	add_to_group("turnity-socket")
+	
 	if not actor:
 		actor = get_parent()
 		if actor == null:
@@ -26,7 +28,6 @@ func _enter_tree():
 
 
 func _ready():
-	add_to_group("turnity-socket")
 	_create_timer()
 	
 	active_turn.connect(on_active_turn)

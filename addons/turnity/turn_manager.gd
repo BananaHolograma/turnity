@@ -21,8 +21,9 @@ var current_socket: TurnitySocket
 var max_turns_in_queue := 7
 
 
-func _ready():
+func _enter_tree():
 	add_to_group("turnity-manager")
+
 
 ### CUSTOM BEHAVIOUR FUNCTIONS ###
 func set_mode(mode: MODE):
