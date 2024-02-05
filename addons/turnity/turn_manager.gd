@@ -78,8 +78,10 @@ func set_dynamic_queue_mode() -> TurnityManager:
 	return self
 
 
-func set_limited_turns(turns: int) -> void:
+func set_limited_turns(turns: int) -> TurnityManager:
 	max_turns = turns
+	
+	return self
 
 
 func set_turn_duration(time: int = 0) -> TurnityManager:
