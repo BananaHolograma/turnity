@@ -7,6 +7,8 @@ signal reset_current_timer
 signal blocked_n_turns(turns: int, total_turns: int)
 signal blocked_turn_consumed(remaining_turns: int)
 signal skipped
+signal enabled_socket
+signal disabled_socket
 
 ## The linked actor in the turn system
 @export var actor: Node
@@ -15,6 +17,15 @@ signal skipped
 
 var timer: Timer
 var active := false
+var disabled := false:
+	set(value):
+		if value != disabled:
+			if value:
+				disabled_socket.emit()
+			else:
+				enabled_socket.emit()
+				
+		disabled = value
 var blocked_turns := 0
 
 
@@ -73,19 +84,34 @@ func skip():
 		ended_turn.emit()
 		skipped.emit()
 
+
+func enable() -> void:
+	disabled = false
+	
+	
+func disable() -> void:
+	disabled = true
+
+
+func is_disabled() -> bool:
+	return disabled
+	
 ### SIGNAL CALLBACKS ###
 func on_active_turn():
-	active = true
-	
-	if blocked_turns > 0:
-		blocked_turns -= 1
-		blocked_turn_consumed.emit(blocked_turns)
-		ended_turn.emit()
-		return
+	if is_disabled():
+		skip()
+	else:	
+		active = true
 		
-	if timer and turn_duration > 0 and not active:
-		timer.start()
-	
+		if blocked_turns > 0:
+			blocked_turns -= 1
+			blocked_turn_consumed.emit(blocked_turns)
+			ended_turn.emit()
+			return
+			
+		if timer and turn_duration > 0 and not active:
+			timer.start()
+		
 
 func on_ended_turn():
 	active = false

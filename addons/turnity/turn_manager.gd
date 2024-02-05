@@ -7,11 +7,11 @@ signal disconnected_turnity_sockets(sockets: Array[TurnitySocket])
 signal turn_changed(next_socket: TurnitySocket)
 signal activated_turn(current_socket: TurnitySocket)
 signal ended_turn(last_socket: TurnitySocket)
+signal finished
 
 enum MODE {
 	SERIAL, ## The turns comes one after another
 	DYNAMIC_QUEUE, ## The queue changes every turn based on the custom sort rule applied
-	STATIC_QUEUE ## The queue is initialized and never changes again the order of the turns
 }
 
 var current_turnity_sockets: Array[TurnitySocket] = []
@@ -20,7 +20,6 @@ var current_mode: MODE = MODE.SERIAL
 
 var serial_queue: Array[TurnitySocket] = []
 var dynamic_queue: Array[TurnitySocket] = []
-var static_queue: Array[TurnitySocket] = []
 
 var sort_rule: Callable = func(a, b): return a > b
 var turn_duration := 0
@@ -31,21 +30,34 @@ func _enter_tree():
 	add_to_group("turnity-manager")
 
 
+func _ready():
+	finished.connect(on_finished)
+
+
 func start(root_node = null):
 	if is_node_ready():
 		reset_active_sockets()
 		current_turnity_sockets = get_active_sockets(root_node)
 		connect_turnity_sockets()
-		
+		 ## We deactivate all the sockets to only active the first one on the initialization
+		deactivate_sockets(current_turnity_sockets)
+			
 		match(current_mode):
 			MODE.SERIAL:
-				pass
-			MODE.STATIC_QUEUE:
-				pass
+				serial_queue.append_array(current_turnity_sockets)
+				apply_sort_rule(serial_queue)
+				current_turn_socket = serial_queue.front()
 			MODE.DYNAMIC_QUEUE:
-				pass
+				dynamic_queue.append_array(current_turnity_sockets)
+				apply_sort_rule(dynamic_queue)
+				current_turn_socket = dynamic_queue.front()
+		
+		current_turn_socket.active_turn.emit()
+		activated_turn.emit(current_turn_socket)
+				
 	else:
 		push_error("Turnity: The TurnityManager is not ready or appended into the scene tree, the turn system cannot be initialized")
+
 
 ### CUSTOM BEHAVIOUR FUNCTIONS ###
 func set_mode(mode: MODE) -> TurnityManager:
@@ -66,11 +78,20 @@ func set_sort_rule(callable: Callable) -> TurnityManager:
 	return self
 	
 	
-func apply_sort_rule():
-	current_turnity_sockets.sort_custom(sort_rule)
+func apply_sort_rule(sockets: Array[TurnitySocket]):
+	sockets.sort_custom(sort_rule)
 	
 
 ### SOCKET CONNECTION & DISCONNECTION FUNCTIONS
+func deactivate_sockets(sockets: Array[TurnitySocket]) -> void:
+	for socket in current_turnity_sockets:
+			socket.active = false
+
+
+func all_sockets_are_disabled(sockets: Array[TurnitySocket]) -> bool:
+	return sockets.filter(func(socket: TurnitySocket): return socket.is_disabled()).size() == sockets.size()
+
+
 func get_active_sockets(root_node = null) -> Array[TurnitySocket]:
 	var sockets: Array[TurnitySocket] = []
 	var nodes = []
@@ -94,6 +115,24 @@ func read_sockets_from_node(node: Node, sockets: Array):
 			sockets.append(child)
 		else:
 			read_sockets_from_node(child, sockets)
+			
+			
+func next_turn_based_on_mode() -> void:
+	var next_socket: TurnitySocket
+	
+	if all_sockets_are_disabled(current_turnity_sockets):
+		finished.emit()
+		return
+	
+	if not current_turnity_sockets.is_empty():
+		match(current_mode):
+				MODE.SERIAL:
+					var index = current_turnity_sockets.find(current_turn_socket)
+					next_socket = current_turnity_sockets.front() if index + 1 >= current_turnity_sockets.size() else current_turnity_sockets[index + 1]				
+				MODE.DYNAMIC_QUEUE:
+					pass
+		
+		next_socket.active_turn.emit()
 
 
 func reset_active_sockets() -> void:
@@ -103,9 +142,9 @@ func reset_active_sockets() -> void:
 	
 	disconnect_turnity_sockets()
 	current_turnity_sockets.clear()
+	current_turn_socket = null
 	
 	serial_queue.clear()
-	static_queue.clear()
 	dynamic_queue.clear()
 
 
@@ -165,3 +204,9 @@ func on_socket_active_turn(socket: TurnitySocket):
 func on_socket_ended_turn(socket: TurnitySocket):
 	ended_turn.emit(socket)
 	turns_passed += 1
+	next_turn_based_on_mode()
+	
+
+func on_finished():
+	reset_active_sockets()
+
