@@ -19,13 +19,11 @@ var current_turnity_sockets: Array[TurnitySocket] = []
 var current_turn_socket: TurnitySocket
 var current_mode: MODE = MODE.SERIAL
 
-var serial_queue: Array[TurnitySocket] = []
-var dynamic_queue: Array[TurnitySocket] = []
-
 var sort_rule: Callable = func(a: TurnitySocket, b: TurnitySocket): return a.id > b.id
 var turn_duration := 0
 var turns_passed := 0
 var max_turns := 0
+var automatic_move_on_to_the_next_turn := false
 
 func _enter_tree():
 	add_to_group("turnity-manager")
@@ -39,19 +37,10 @@ func start(root_node = null):
 	if is_node_ready():
 		reset_active_sockets()
 		current_turnity_sockets = get_active_sockets(root_node)
+		apply_sort_rule(current_turnity_sockets)
 		connect_turnity_sockets()
 		deactivate_sockets(current_turnity_sockets)	 ## We deactivate all the sockets to only make active the first one on the initialization
 		set_turn_duration_on_sockets()
-		
-		match(current_mode):
-			MODE.SERIAL:
-				serial_queue.append_array(current_turnity_sockets)
-				apply_sort_rule(serial_queue)
-				current_turn_socket = serial_queue.front()
-			MODE.DYNAMIC_QUEUE:
-				dynamic_queue.append_array(current_turnity_sockets)
-				apply_sort_rule(dynamic_queue)
-				current_turn_socket = dynamic_queue.front()
 		
 		current_turn_socket.active_turn.emit()
 		activated_turn.emit(current_turn_socket)
@@ -78,6 +67,10 @@ func set_dynamic_queue_mode() -> TurnityManager:
 	return self
 
 
+func automatically_move_on_to_the_next_turn(enabled: bool = false):
+	automatic_move_on_to_the_next_turn = enabled
+	
+	
 func set_limited_turns(turns: int) -> TurnityManager:
 	max_turns = turns
 	
@@ -142,7 +135,7 @@ func read_sockets_from_node(node: Node, sockets: Array):
 			read_sockets_from_node(child, sockets)
 			
 			
-func next_turn_based_on_mode() -> void:
+func next_turn() -> void:
 	var next_socket: TurnitySocket
 	
 	if all_sockets_are_disabled(current_turnity_sockets) or turns_passed >= max_turns:
@@ -150,11 +143,14 @@ func next_turn_based_on_mode() -> void:
 		return
 	
 	if not current_turnity_sockets.is_empty():
+		turns_passed += 1
+		
 		match(current_mode):
 				MODE.SERIAL:
 					var index = current_turnity_sockets.find(current_turn_socket)
 					next_socket = current_turnity_sockets.front() if index + 1 >= current_turnity_sockets.size() else current_turnity_sockets[index + 1]				
 				MODE.DYNAMIC_QUEUE:
+					## TODO
 					pass
 		
 		if turns_passed + 1 == max_turns:
@@ -170,9 +166,6 @@ func reset_active_sockets() -> void:
 	disconnect_turnity_sockets()
 	current_turnity_sockets.clear()
 	current_turn_socket = null
-	
-	serial_queue.clear()
-	dynamic_queue.clear()
 
 
 func connect_turnity_sockets() -> void:
@@ -230,8 +223,9 @@ func on_socket_active_turn(socket: TurnitySocket):
 
 func on_socket_ended_turn(socket: TurnitySocket):
 	ended_turn.emit(socket)
-	turns_passed += 1
-	next_turn_based_on_mode()
+	
+	if automatic_move_on_to_the_next_turn:
+		next_turn()
 	
 
 func on_finished():
