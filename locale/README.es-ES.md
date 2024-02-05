@@ -29,8 +29,8 @@ Tu plugin para una gestión de turnos optimizada en Godot. Eleva la experiencia 
 	- [Inicializar un nuevo sistema de turnos](#inicializar-un-nuevo-sistema-de-turnos)
 	- [Utiliza las señales a su favor](#utiliza-las-señales-a-su-favor)
 	- [Pasar manualmente al siguiente turno](#pasar-manualmente-al-siguiente-turno)
-		- [Propiedades y señales disponibles](#propiedades-y-señales-disponibles)
-		- [Métodos disponibles](#métodos-disponibles)
+	- [Propiedades y señales disponibles](#propiedades-y-señales-disponibles)
+	- [Métodos disponibles](#métodos-disponibles)
 - [Como añadir un TurnitySocket](#como-añadir-un-turnitysocket)
 	- [Via editor](#via-editor)
 	- [Via script](#via-script)
@@ -110,7 +110,7 @@ TurnityManager.next_turn()
 TurnityManager.current_turn_socket
 ```
 
-### Propiedades y señales disponibles
+## Propiedades y señales disponibles
 Puedes recolectar toda la información necesaria a través de este nodo:
 
  ```python
@@ -140,7 +140,7 @@ var max_turns := 0
 var automatic_move_on_to_the_next_turn := false
  ```
 
-### Métodos disponibles
+## Métodos disponibles
 ```python
 ### TURN ACTIVE ACTION ###
 func start(root_node = null):

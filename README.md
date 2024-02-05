@@ -31,8 +31,8 @@ Your go-to plugin for streamlined turn management in Godot. Elevate your game's 
 	- [Initializing a new turn system](#initializing-a-new-turn-system)
 	- [Use signals in your favor](#use-signals-in-your-favor)
 	- [Manually move to the next turn](#manually-move-to-the-next-turn)
-		- [Available accessors and signals](#available-accessors-and-signals)
-		- [Available methods](#available-methods)
+	- [Available accessors and signals](#available-accessors-and-signals)
+	- [Available methods](#available-methods)
 - [How to add a TurnitySocket](#how-to-add-a-turnitysocket)
 	- [Via editor](#via-editor)
 	- [Via script](#via-script)
@@ -111,7 +111,7 @@ TurnityManager.next_turn()
 TurnityManager.current_turn_socket
 ```
 
-### Available accessors and signals
+## Available accessors and signals
 You can collect quite a lot of important information from this node:
 
  ```python
@@ -141,7 +141,7 @@ var max_turns := 0
 var automatic_move_on_to_the_next_turn := false
  ```
 
-### Available methods
+## Available methods
 ```python
 ### TURN ACTIVE ACTION ###
 func start(root_node = null):
