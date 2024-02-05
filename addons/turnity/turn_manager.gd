@@ -7,6 +7,7 @@ signal disconnected_turnity_sockets(sockets: Array[TurnitySocket])
 signal turn_changed(next_socket: TurnitySocket)
 signal activated_turn(current_socket: TurnitySocket)
 signal ended_turn(last_socket: TurnitySocket)
+signal last_turn_reached
 signal finished
 
 enum MODE {
@@ -24,7 +25,7 @@ var dynamic_queue: Array[TurnitySocket] = []
 var sort_rule: Callable = func(a: TurnitySocket, b: TurnitySocket): return a.id > b.id
 var turn_duration := 0
 var turns_passed := 0
-
+var max_turns := 0
 
 func _enter_tree():
 	add_to_group("turnity-manager")
@@ -70,10 +71,15 @@ func set_serial_mode() -> TurnityManager:
 	
 	return self
 
+
 func set_dynamic_queue_mode() -> TurnityManager:
 	current_mode = MODE.DYNAMIC_QUEUE
 	
 	return self
+
+
+func set_limited_turns(turns: int) -> void:
+	max_turns = turns
 
 
 func set_turn_duration(time: int = 0) -> TurnityManager:
@@ -95,7 +101,7 @@ func set_sort_rule(callable: Callable) -> TurnityManager:
 	return self
 	
 	
-func apply_sort_rule(sockets: Array[TurnitySocket]):
+func apply_sort_rule(sockets: Array[TurnitySocket] = current_turnity_sockets):
 	sockets.sort_custom(sort_rule)
 	
 
@@ -137,7 +143,7 @@ func read_sockets_from_node(node: Node, sockets: Array):
 func next_turn_based_on_mode() -> void:
 	var next_socket: TurnitySocket
 	
-	if all_sockets_are_disabled(current_turnity_sockets):
+	if all_sockets_are_disabled(current_turnity_sockets) or turns_passed >= max_turns:
 		finished.emit()
 		return
 	
@@ -149,7 +155,9 @@ func next_turn_based_on_mode() -> void:
 				MODE.DYNAMIC_QUEUE:
 					pass
 		
-		print("NEXT TURN BASED ON MODE ", next_socket.id)
+		if turns_passed + 1 == max_turns:
+			last_turn_reached.emit()
+			
 		next_socket.active_turn.emit()
 
 
@@ -227,4 +235,5 @@ func on_socket_ended_turn(socket: TurnitySocket):
 func on_finished():
 	reset_active_sockets()
 	turn_duration = 0
+	max_turns = 0
 
