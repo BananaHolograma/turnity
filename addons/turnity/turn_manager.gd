@@ -4,7 +4,7 @@ signal turnity_socket_connected(socket: TurnitySocket)
 signal turnity_socket_disconnected(socket: TurnitySocket)
 signal connected_turnity_sockets(sockets: Array[TurnitySocket])
 signal disconnected_turnity_sockets(sockets: Array[TurnitySocket])
-signal turn_changed(next_socket: TurnitySocket)
+signal turn_changed(previous_socket: TurnitySocket, next_socket: TurnitySocket)
 signal activated_turn(current_socket: TurnitySocket)
 signal ended_turn(last_socket: TurnitySocket)
 signal last_turn_reached
@@ -155,7 +155,8 @@ func next_turn() -> void:
 		
 		if turns_passed + 1 == max_turns:
 			last_turn_reached.emit()
-			
+		
+		turn_changed.emit(current_turn_socket, next_socket)
 		next_socket.active_turn.emit()
 
 
@@ -226,7 +227,7 @@ func on_socket_ended_turn(socket: TurnitySocket):
 	
 	if automatic_move_on_to_the_next_turn:
 		next_turn()
-	
+
 
 func on_finished():
 	reset_active_sockets()
