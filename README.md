@@ -16,7 +16,7 @@
 
 Your go-to plugin for streamlined turn management in Godot. Elevate your game's experience with efficient turn-based mechanics. Craft dynamic battles and engaging scenarios effortlessly.
 
-- **Flexible Turn Modes**: Choose between serial mode (turns one after another) and dynamic queue mode (customizable turn order based on a sort rule every turn).
+- **Flexible Turn Modes**: Choose between serial mode *(turns one after another)* and dynamic queue mode *(customizable turn order based on a sort rule every turn).*
 - **Configurable Parameters**: Adjust turn duration, set a maximum number of turns, enable automatic progression to the next turn and much more.
 - **Dynamic Sorting**: Define custom sorting rules for turn order.
 - **Easy Integration**: Seamlessly integrate Turnity with your Godot project using just 2 Nodes, connecting and disconnecting TurnitySockets effortlessly.
@@ -63,7 +63,7 @@ This plugin allows you to configure a turn based system by applying nodes that w
 ## Initializing a new turn system
 Imagine that your videogame triggers an event to start a battle, it is at this moment when we want to initialize the turn system with the members of that battle.
 
-**You can pass it as a parameter the `root node` where you want it to get the sockets recursively. If no value is passed it uses `get_tree()` by default and collects all sockets by their group name *(defined internally by the plugin)*.
+You can pass it as a parameter the `root node` where you want it to get the sockets recursively. If no value is passed it uses `get_tree()` by default and collects all sockets by their group name (defined internally by the plugin).
 
 ***Each time the function `start()` is invoked, it restarts all the internal parameters, it is good to keep this in mind in order not to restart the shift system unintentionally.***
 
@@ -86,13 +86,13 @@ func your_custom_sort_function(socket_a: TurnitySocket, socket_b: TurnitySocket)
 		## Write your logic here, it can be anything you need to sort the turn queue
 		socket_a.actor.agility > socket_b.actor.agility
 ##...
-
 ```
+
 **You can configure:**
 - The number of turns this new "battle" will endure, once the last turn is consumed the `finished signal` is emitted
 - The turn duration in seconds, an automatic timer is managed by you to end the turn when the counter reaches zero.
-- The next turn can be automatic or not, it means that if for example the turn duration reachs zero it will pass to the next TurnitySocket
-- The sort callback applied to define the order of the turn queue, apply your own ordering logic.
+- The next turn can be automatic or not, it means that if for example the turn duration reachs zero it will pass to the next `TurnitySocket`
+- The sort callback applied to define the order of the turn queue, apply your own ordering logic that your game needs.
 
 ## Use signals in your favor
 Create your unique turn system workflow connecting to the appended `TurnitySocket` signals and reacting using the logic that your video game needs. This plugin only offers a very simple input to manage a set of turns, the rest is up to you.
@@ -103,6 +103,7 @@ The signals from `TurnityManager` are useful to obtain this information in other
 The automatic step really only applies when the `turn_duration` is greater than zero, the rest must be applied manually. This allows you to apply the necessary logic of your game before passing the turn.
 
 This method automatically determines according to the selected mode which is the next turn:
+
 ```python
 TurnityManager.next_turn()
 
@@ -209,6 +210,7 @@ func _format_seconds(time : float, use_milliseconds : bool) -> String:
 You can block the socket a limited numbers of turns in case you want to apply some kind of anulation effect and prevent the entity from consuming a turn. This block can be reset anytime with `reset_blocked_turns`
 
 The blocked turns are cumulative so if you call the function again they will be added to the existing ones:
+
 ```python
 ## Blocked 3 turns in a row
 socket.block_a_number_of_turns(3)
