@@ -9,17 +9,27 @@ signal activated_turn(current_socket: TurnitySocket)
 signal ended_turn(last_socket: TurnitySocket)
 
 enum MODE {
-	SERIAL,
-	DYNAMIC_QUEUE,
-	STATIC_QUEUE
+	SERIAL, ## The turns comes one after another
+	DYNAMIC_QUEUE, ## The queue changes every turn based on the custom sort rule applied
+	STATIC_QUEUE ## The queue is initialized and never changes again the order of the turns
 }
 
 @onready var current_turnity_sockets: Array[TurnitySocket] = get_active_sockets()
 
-var current_mode: MODE = MODE.SERIAL
-var current_socket: TurnitySocket
-var max_turns_in_queue := 7
+var current_mode: MODE = MODE.SERIAL:
+	set(value):
+		if value != current_mode:
+			clean_active_sockets()
+			
+		current_mode = value
 
+var current_turn_socket: TurnitySocket
+
+var serial_queue: Array[TurnitySocket] = []
+var dynamic_queue: Array[TurnitySocket] = []
+var static_queue: Array[TurnitySocket] = []
+
+var turns_passed := 0
 
 func _enter_tree():
 	add_to_group("turnity-manager")
@@ -36,11 +46,22 @@ func apply_sort_rule(callable: Callable):
 
 ### SOCKET CONNECTION & DISCONNECTION FUNCTIONS
 func get_active_sockets() -> Array[TurnitySocket]:
-	return get_tree().get_nodes_in_group("turnity-socket").filter(func(node): return node is TurnitySocket)
+	var sockets: Array[TurnitySocket] = []
+	var nodes = get_tree().get_nodes_in_group("turnity-socket").filter(func(node): return node is TurnitySocket)
 	
+	## We need to manual append the nodes to a new array to make the static typing works on arrays for the compiler
+	for socket in nodes:
+		sockets.append(socket)
+		
+	return sockets
+
 
 func clean_active_sockets() -> void:
+	turns_passed = 0
 	current_turnity_sockets.clear()
+	serial_queue.clear()
+	static_queue.clear()
+	dynamic_queue.clear()
 
 
 func connect_turnity_sockets() -> void:
@@ -93,8 +114,9 @@ func _disconnect_socket(socket: TurnitySocket):
 ### SIGNAL CALLBACKS ###
 func on_socket_active_turn(socket: TurnitySocket):
 	activated_turn.emit(socket)
-	current_socket = socket
+	current_turn_socket = socket
 
 
 func on_socket_ended_turn(socket: TurnitySocket):
 	ended_turn.emit(socket)
+	turns_passed += 1
