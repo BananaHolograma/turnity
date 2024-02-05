@@ -14,51 +14,96 @@ enum MODE {
 	STATIC_QUEUE ## The queue is initialized and never changes again the order of the turns
 }
 
-@onready var current_turnity_sockets: Array[TurnitySocket] = get_active_sockets()
-
-var current_mode: MODE = MODE.SERIAL:
-	set(value):
-		if value != current_mode:
-			clean_active_sockets()
-			
-		current_mode = value
-
+var current_turnity_sockets: Array[TurnitySocket] = []
 var current_turn_socket: TurnitySocket
+var current_mode: MODE = MODE.SERIAL
 
 var serial_queue: Array[TurnitySocket] = []
 var dynamic_queue: Array[TurnitySocket] = []
 var static_queue: Array[TurnitySocket] = []
 
+var sort_rule: Callable = func(a, b): return a > b
+var turn_duration := 0
 var turns_passed := 0
+
 
 func _enter_tree():
 	add_to_group("turnity-manager")
 
 
-### CUSTOM BEHAVIOUR FUNCTIONS ###
-func set_mode(mode: MODE):
-		current_mode = mode
+func start(root_node = null):
+	if is_node_ready():
+		reset_active_sockets()
+		current_turnity_sockets = get_active_sockets(root_node)
+		connect_turnity_sockets()
 		
-		
-func apply_sort_rule(callable: Callable):
-	current_turnity_sockets.sort_custom(callable)
+		match(current_mode):
+			MODE.SERIAL:
+				pass
+			MODE.STATIC_QUEUE:
+				pass
+			MODE.DYNAMIC_QUEUE:
+				pass
+	else:
+		push_error("Turnity: The TurnityManager is not ready or appended into the scene tree, the turn system cannot be initialized")
 
+### CUSTOM BEHAVIOUR FUNCTIONS ###
+func set_mode(mode: MODE) -> TurnityManager:
+	current_mode = mode
+	
+	return self
+
+
+func set_turn_duration(time: int = 0) -> TurnityManager:
+	turn_duration = abs(time)
+	
+	return self
+
+
+func set_sort_rule(callable: Callable) -> TurnityManager:
+	sort_rule = callable
+	
+	return self
+	
+	
+func apply_sort_rule():
+	current_turnity_sockets.sort_custom(sort_rule)
+	
 
 ### SOCKET CONNECTION & DISCONNECTION FUNCTIONS
-func get_active_sockets() -> Array[TurnitySocket]:
+func get_active_sockets(root_node = null) -> Array[TurnitySocket]:
 	var sockets: Array[TurnitySocket] = []
-	var nodes = get_tree().get_nodes_in_group("turnity-socket").filter(func(node): return node is TurnitySocket)
+	var nodes = []
 	
-	## We need to manual append the nodes to a new array to make the static typing works on arrays for the compiler
-	for socket in nodes:
-		sockets.append(socket)
-		
+	if root_node == null:
+		nodes = get_tree().get_nodes_in_group("turnity-socket").filter(func(node): return node is TurnitySocket)
+		## We need to manual append the nodes to a new array to make the static typing works on arrays for the compiler
+		for socket in nodes:
+			sockets.append(socket)
+	else:
+		read_sockets_from_node(root_node, sockets)
+	
 	return sockets
 
 
-func clean_active_sockets() -> void:
+func read_sockets_from_node(node: Node, sockets: Array):
+	var childrens = node.get_children(true)
+	
+	for child in childrens:
+		if child is TurnitySocket:
+			sockets.append(child)
+		else:
+			read_sockets_from_node(child, sockets)
+
+
+func reset_active_sockets() -> void:
 	turns_passed = 0
+	turn_duration = 0
+	sort_rule = func(a, b): return a > b
+	
+	disconnect_turnity_sockets()
 	current_turnity_sockets.clear()
+	
 	serial_queue.clear()
 	static_queue.clear()
 	dynamic_queue.clear()

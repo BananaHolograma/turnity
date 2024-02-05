@@ -64,6 +64,10 @@ func block_a_number_of_turns(turns: int):
 	blocked_n_turns.emit(turns, blocked_turns)
 
 
+func is_blocked() -> bool:
+	return blocked_turns > 0
+
+
 func skip():
 	if active:
 		ended_turn.emit()
