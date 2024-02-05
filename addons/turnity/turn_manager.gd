@@ -21,7 +21,7 @@ var current_mode: MODE = MODE.SERIAL
 var serial_queue: Array[TurnitySocket] = []
 var dynamic_queue: Array[TurnitySocket] = []
 
-var sort_rule: Callable = func(a, b): return a > b
+var sort_rule: Callable = func(a: TurnitySocket, b: TurnitySocket): return a.id > b.id
 var turn_duration := 0
 var turns_passed := 0
 
@@ -39,9 +39,9 @@ func start(root_node = null):
 		reset_active_sockets()
 		current_turnity_sockets = get_active_sockets(root_node)
 		connect_turnity_sockets()
-		 ## We deactivate all the sockets to only active the first one on the initialization
-		deactivate_sockets(current_turnity_sockets)
-			
+		deactivate_sockets(current_turnity_sockets)	 ## We deactivate all the sockets to only make active the first one on the initialization
+		set_turn_duration_on_sockets()
+		
 		match(current_mode):
 			MODE.SERIAL:
 				serial_queue.append_array(current_turnity_sockets)
@@ -54,7 +54,6 @@ func start(root_node = null):
 		
 		current_turn_socket.active_turn.emit()
 		activated_turn.emit(current_turn_socket)
-				
 	else:
 		push_error("Turnity: The TurnityManager is not ready or appended into the scene tree, the turn system cannot be initialized")
 
@@ -66,10 +65,28 @@ func set_mode(mode: MODE) -> TurnityManager:
 	return self
 
 
+func set_serial_mode() -> TurnityManager:
+	current_mode = MODE.SERIAL
+	
+	return self
+
+func set_dynamic_queue_mode() -> TurnityManager:
+	current_mode = MODE.DYNAMIC_QUEUE
+	
+	return self
+
+
 func set_turn_duration(time: int = 0) -> TurnityManager:
 	turn_duration = abs(time)
 	
 	return self
+
+
+func set_turn_duration_on_sockets() -> void:
+	if turn_duration > 0:
+		for socket in current_turnity_sockets:
+			if socket.turn_duration == 0: ## The local turn duration value of each socket is prioritized
+				socket.change_turn_duration(turn_duration)
 
 
 func set_sort_rule(callable: Callable) -> TurnityManager:
@@ -132,13 +149,13 @@ func next_turn_based_on_mode() -> void:
 				MODE.DYNAMIC_QUEUE:
 					pass
 		
+		print("NEXT TURN BASED ON MODE ", next_socket.id)
 		next_socket.active_turn.emit()
 
 
 func reset_active_sockets() -> void:
 	turns_passed = 0
-	turn_duration = 0
-	sort_rule = func(a, b): return a > b
+	sort_rule = func(a: TurnitySocket, b: TurnitySocket): return a.id > b.id
 	
 	disconnect_turnity_sockets()
 	current_turnity_sockets.clear()
@@ -209,4 +226,5 @@ func on_socket_ended_turn(socket: TurnitySocket):
 
 func on_finished():
 	reset_active_sockets()
+	turn_duration = 0
 

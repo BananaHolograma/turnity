@@ -15,6 +15,7 @@ signal disabled_socket
 ## The turn duration for this socket, leave it to zero to make it infinite
 @export var turn_duration := 0
 
+var id: String
 var timer: Timer
 var active := false
 var disabled := false:
@@ -31,6 +32,9 @@ var blocked_turns := 0
 
 func _enter_tree():
 	add_to_group("turnity-socket")
+	
+	if id == null or id.is_empty():
+		id = _generate_random_id()
 	
 	if not actor:
 		actor = get_parent()
@@ -61,7 +65,8 @@ func change_turn_duration(new_duration: int):
 	if timer.is_inside_tree():
 		changed_turn_duration.emit(timer.wait_time, new_duration)
 		timer.stop()
-		timer.wait_time = max(0.05, new_duration)
+		timer.wait_time = new_duration
+		turn_duration = new_duration
 
 
 func reset_active_timer():
@@ -96,11 +101,22 @@ func disable() -> void:
 func is_disabled() -> bool:
 	return disabled
 	
+	
+func _generate_random_id(length: int = 20, characters: String =  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):
+	var random_number_generator = RandomNumberGenerator.new()
+	var result = ""
+	
+	if not characters.is_empty() and length > 0:
+		for i in range(length):
+			result += characters[random_number_generator.randi() % characters.length()]
+
+	return result
+	
 ### SIGNAL CALLBACKS ###
 func on_active_turn():
 	if is_disabled():
 		skip()
-	else:	
+	else:
 		active = true
 		
 		if blocked_turns > 0:
@@ -108,8 +124,8 @@ func on_active_turn():
 			blocked_turn_consumed.emit(blocked_turns)
 			ended_turn.emit()
 			return
-			
-		if timer and turn_duration > 0 and not active:
+		
+		if timer and turn_duration > 0 and active:
 			timer.start()
 		
 
