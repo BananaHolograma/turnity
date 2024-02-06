@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceas1ivjwelkt"
-path="res://.godot/imported/turn_socket.svg-dd32a352c380cff85e6fe749fb209562.ctex"
+path="res://.godot/imported/turn_socket.svg-3d22ba4f26d88f5995d786daa518e9d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/icons/turn_socket.svg"
-dest_files=["res://.godot/imported/turn_socket.svg-dd32a352c380cff85e6fe749fb209562.ctex"]
+source_file="res://addons/turnity/icons/turn_socket.svg"
+dest_files=["res://.godot/imported/turn_socket.svg-3d22ba4f26d88f5995d786daa518e9d7.ctex"]
 
 [params]
 
