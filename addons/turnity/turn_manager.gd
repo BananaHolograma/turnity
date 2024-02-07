@@ -164,7 +164,6 @@ func next_turn() -> void:
 
 func reset_active_sockets() -> void:
 	turns_passed = 0
-	sort_rule = func(a: TurnitySocket, b: TurnitySocket): return a.id > b.id
 	
 	disconnect_turnity_sockets()
 	current_turnity_sockets.clear()
@@ -244,4 +243,4 @@ func on_finished():
 	reset_active_sockets()
 	turn_duration = 0
 	max_turns = 0
-
+	sort_rule = func(a: TurnitySocket, b: TurnitySocket): return a.id > b.id
