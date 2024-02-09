@@ -140,7 +140,7 @@ func read_sockets_from_node(node: Node, sockets: Array):
 func next_turn() -> void:
 	var next_socket: TurnitySocket
 	
-	if all_sockets_are_disabled(current_turnity_sockets) or turns_passed >= max_turns:
+	if all_sockets_are_disabled(current_turnity_sockets) or (max_turns > 0 and turns_passed >= max_turns):
 		finished.emit()
 		return
 	
