@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Turnity"
 config/description="Your go-to plugin for streamlined turn management in Godot. Elevate your game's experience with efficient turn-based mechanics. Craft dynamic battles and engaging scenarios effortlessly."
-config/version="1.0.0"
+config/version="1.0.4"
 config/tags=PackedStringArray("plugin", "system")
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"

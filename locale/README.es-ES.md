@@ -75,8 +75,8 @@ func _init_battle():
 	TurnityManager.set_serial_mode()\
 		.set_limited_turns(5)\
 		.set_turn_duration(30)\
-		.automatically_move_on_to_the_next_turn(false)
-		.set_sort_rule(your_custom_sort_function)
+		.automatically_move_on_to_the_next_turn(false)\
+		.set_sort_rule(your_custom_sort_function)\
 		.start(self)
 
 
